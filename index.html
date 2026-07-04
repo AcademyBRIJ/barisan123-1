@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT D'BRIJ Academy - Ujian Deret Angka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0f17; }
+        .number-box { @apply w-10 h-10 flex items-center justify-center border border-emerald-950 cursor-pointer rounded-lg text-xs font-semibold transition-all shadow-sm; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-200">
+
+    <div id="login-page" class="fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+        <div class="bg-slate-900 p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border border-emerald-500/20">
+            <h1 class="text-3xl font-extrabold text-emerald-400 tracking-tight mb-2">D'BRIJ Academy</h1>
+            <div class="w-12 h-1 bg-emerald-500 mx-auto mb-6 rounded-full"></div>
+            
+            <p class="text-slate-400 mb-6 text-sm bg-black/40 py-3 px-4 rounded-xl inline-block w-full border border-emerald-950">
+                <span class="font-semibold text-slate-200">Ujian Psikotes: Deret Angka</span><br>
+                <span class="text-xs text-slate-500">Durasi Waktu: 30 Menit</span>
+            </p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-1.5">Nama Lengkap</label>
+                    <input type="text" id="input-nama" placeholder="Masukkan nama Anda" class="w-full p-3.5 bg-black/50 border border-emerald-950 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm font-medium text-slate-100">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-1.5">Password</label>
+                    <input type="password" id="input-password" placeholder="••••••••" class="w-full p-3.5 bg-black/50 border border-emerald-950 rounded-xl outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all text-sm font-medium text-slate-100">
+                </div>
+            </div>
+            
+            <button onclick="mulaiUjian()" class="w-full mt-6 bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/10 transition-all tracking-wide uppercase text-sm">MULAI UJIAN</button>
+        </div>
+    </div>
+
+    <div id="exam-ui" class="hidden flex flex-col h-screen">
+        <header class="bg-black text-white px-4 md:px-6 py-3.5 flex justify-between items-center shadow-md shrink-0 border-b border-emerald-950">
+            <div class="flex items-center gap-3">
+                <span class="text-base md:text-lg font-bold tracking-tight text-emerald-400">D'BRIJ ACADEMY </span>
+                <div class="h-5 w-px bg-emerald-950 hidden md:block"></div>
+                <span id="display-nama" class="font-medium uppercase text-xs md:text-sm bg-slate-900 px-2.5 py-1 rounded text-slate-300 truncate max-w-[100px] md:max-w-none border border-emerald-950">PESERTA</span>
+            </div>
+            <div class="bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                <span class="text-[10px] font-bold text-emerald-500 hidden sm:inline tracking-wider">SISA WAKTU:</span>
+                <span id="timer" class="text-sm md:text-base font-mono font-bold text-emerald-400 tracking-wide">30:00</span>
+            </div>
+        </header>
+
+        <div class="flex flex-col md:flex-row flex-1 overflow-hidden bg-slate-950">
+            
+            <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-900 order-1 md:order-1 flex items-center">
+                <div class="max-w-3xl mx-auto w-full text-left">
+                    <h2 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">
+                        SOAL NO: <span id="current-number" class="bg-emerald-500 text-black px-2.5 py-1 rounded-md ml-1 font-mono text-xs md:text-sm font-bold">1</span>
+                    </h2>
+                    <div id="question-text" class="text-xl md:text-3xl font-bold text-slate-100 mb-6 p-6 bg-black/40 rounded-2xl border border-emerald-950/60 leading-relaxed tracking-wide shadow-sm text-left"></div>
+                    <div id="options-container" class="space-y-3"></div>
+                </div>
+            </main>
+
+            <aside class="w-full md:w-80 bg-slate-950 p-4 border-t md:border-t-0 md:border-l border-emerald-950/40 flex flex-col order-2 md:order-2 max-h-[220px] md:max-h-none shrink-0 md:shrink overflow-y-auto">
+                <h3 class="text-[11px] font-bold text-slate-400 mb-3 uppercase tracking-wider text-center md:text-left">Navigasi Soal</h3>
+                
+                <div id="grid-nomor" class="grid grid-cols-5 gap-2 pb-2 md:pb-0">
+                    </div>
+                
+                <div class="hidden md:block mt-auto p-4 space-y-2.5 text-xs border-t border-emerald-950 pt-4 text-slate-400">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-emerald-500 rounded-md"></div> Sudah Terjawab</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-amber-400 rounded-md"></div> Ragu-ragu</div>
+                </div>
+            </aside>
+
+        </div>
+
+        <footer class="bg-black border-t border-emerald-950 p-3 md:p-4 flex justify-between items-center gap-3 shrink-0 shadow-inner">
+            <button onclick="changeQuestion(-1)" class="px-4 md:px-6 py-2.5 bg-slate-900 text-slate-400 rounded-xl text-xs md:text-sm font-semibold hover:bg-slate-800 transition-colors border border-emerald-950/60 uppercase tracking-wide">Kembali</button>
+            
+            <label class="flex items-center gap-2 cursor-pointer bg-amber-400 text-amber-950 px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold hover:bg-amber-500 shadow-sm transition-colors uppercase tracking-wide">
+                <input type="checkbox" id="ragu-checkbox" onchange="toggleRagu()" class="w-4 h-4 accent-amber-800 rounded"> 
+                <span class="hidden sm:inline">Ragu-Ragu</span><span class="sm:hidden">Ragu</span>
+            </label>
+            
+            <button onclick="changeQuestion(1)" id="btn-next" class="px-4 md:px-6 py-2.5 bg-emerald-500 text-black rounded-xl text-xs md:text-sm font-bold hover:bg-emerald-600 transition-colors shadow-md shadow-emerald-500/10 uppercase tracking-wide">Lanjut</button>
+        </footer>
+    </div>
+
+    <div id="result-page" class="hidden fixed inset-0 z-[60] bg-black overflow-y-auto p-4 md:p-8">
+        <div class="max-w-3xl mx-auto bg-slate-900 my-4 md:my-8 rounded-2xl shadow-xl border border-emerald-950 p-6 md:p-8">
+            <div class="text-center mb-8 border-b border-emerald-950 pb-8">
+                <h1 class="text-xl md:text-2xl font-extrabold text-slate-200 uppercase tracking-wider">Hasil Ujian Anda</h1>
+                <div id="final-score" class="text-7xl md:text-8xl font-black text-emerald-400 my-4 tracking-tight">0</div>
+                <p class="text-slate-400 text-sm md:text-base mb-4">Nama Peserta: <span id="res-nama" class="font-bold text-slate-100 uppercase"></span></p>
+                <button onclick="location.reload()" class="bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold shadow-md hover:bg-emerald-600 transition-all text-sm tracking-wide uppercase">Ulangi Ujian</button>
+            </div>
+            <div id="review-container" class="space-y-4">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // Logika array data dipertahankan sesuai aslinya
+        const questions = [
+            { id: 1, text: "42, 7, 28, 4, 16, ..., 8", options: ["2", "3", "4", "5", "6"], answer: null, correct: 0, discussion: "Pola: 42/6=7, 28/7=4, 16/8=2.", isRagu: false },
+            { id: 2, text: "3, 6, 1, 2, -4, ..., -15", options: ["-10", "-8", "-6", "4", "2"], answer: null, correct: 1, discussion: "Pola: x2, -5, x2, -6, x2, -7. (-4 x 2 = -8).", isRagu: false },
+            { id: 3, text: "5, 9, 18, 22, ..., 70, 280", options: ["26", "27", "44", "55", "66"], answer: null, correct: 2, discussion: "Pola: +4, x2, +4, x2. (22 x 2 = 44).", isRagu: false },
+            { id: 4, text: "...., 6, 1, 3, -7, -21, -36", options: ["-2", "-3", "0", "2", "3"], answer: null, correct: 4, discussion: "Pola dari belakang: -36+15, -21/3, -7+10, 3/3, 1+5, 6/2 = 3.", isRagu: false },
+            { id: 5, text: "7, 2, -4, -9, 18, 13, ...", options: ["12", "13", "-26", "-22", "-18"], answer: null, correct: 2, discussion: "Pola: -5, -6, -5, x(-2), -5, x(-2). (13 x -2 = -26).", isRagu: false },
+            { id: 6, text: "24, 4, 20, 5, 25, ..., 75", options: ["15", "16", "17", "18", "19"], answer: null, correct: 0, discussion: "Pola deret: 24, 20, 25... dan 4, 5, 15. Jawaban 15.", isRagu: false },
+            { id: 7, text: "3, ..., -1, 2, 7, -14, -9", options: ["-8", "-6", "-4", "-2", "2"], answer: null, correct: 1, discussion: "Pola: -6 didapat dari (3 x -2) + 5.", isRagu: false },
+            { id: 8, text: "64, 16, 20, 5, 8, ..., 4", options: ["8", "6", "4", "2", "0"], answer: null, correct: 3, discussion: "Pola: /4, +4, /4, +3, /4. (8/4 = 2).", isRagu: false },
+            { id: 9, text: "7, 7, 2, 6, 0, 0, ...", options: ["-3", "-5", "-7", "7", "5"], answer: null, correct: 2, discussion: "Pola: x1, -5, x3, -6, x1, -7. (0-7 = -7).", isRagu: false },
+            { id: 10, text: "..., 2, 6, 8, 24, 26, 78", options: ["1", "2", "0", "-1", "12"], answer: null, correct: 2, discussion: "Pola: x3, +2. (0 x 3 = 0, 0 + 2 = 2).", isRagu: false },
+            { id: 11, text: "2, 20, 2, 20, 4, 40, ...", options: ["24", "26", "28", "40", "46"], answer: null, correct: 3, discussion: "Pola deret kembar: 2,2, 4,4... dan 20,20, 40,40.", isRagu: false },
+            { id: 12, text: "8, 6, -12, -15, 30, 26, ...", options: ["-52", "-53", "-56", "-58", "-60"], answer: null, correct: 0, discussion: "Pola: -2, x(-2), -3, x(-2)... (26 x -2 = -52).", isRagu: false },
+            { id: 13, text: "18, 3, 12, 2, ..., 3, 12", options: ["3", "4", "6", "8", "10"], answer: null, correct: 3, discussion: "Pola: /6, x4. (2 x 4 = 8).", isRagu: false },
+            { id: 14, text: "5, 3, -6, -9, ..., 14, -28", options: ["-18", "-20", "16", "18", "20"], answer: null, correct: 3, discussion: "Pola: -2, x(-2), -3, x(-2). (-9 x -2 = 18).", isRagu: false },
+            { id: 15, text: "16, 32, 34, 68, 72, ..., 150, 300", options: ["78", "80", "144", "146", "148"], answer: null, correct: 2, discussion: "Pola: x2, +2, x2, +4, x2, +6... (72 x 2 = 144).", isRagu: false },
+            { id: 16, text: "8, -16, -11, 22, 27, ..., -49, 98", options: ["32", "34", "54", "-54", "-34"], answer: null, correct: 3, discussion: "Pola: x(-2), +5. (27 x -2 = -54).", isRagu: false },
+            { id: 17, text: "2, 8, 5, 20, 16, ..., 59", options: ["61", "62", "63", "64", "65"], answer: null, correct: 3, discussion: "Pola: x4, -3, x4, -4, x4, -5. (16 x 4 = 64).", isRagu: false },
+            { id: 18, text: "2, 6, 1, 6, -4, ..., -51, -612", options: ["36", "54", "-36", "-54", "61"], answer: null, correct: 2, discussion: "Pola: x3, -5, x6, -10, x9. (-4 x 9 = -36).", isRagu: false },
+            { id: 19, text: "2, 4, 2, 4, 0, 0, -6, ...", options: ["-9", "-12", "-14", "9", "12"], answer: null, correct: 1, discussion: "Pola: -2, -4, -6, -12. (-6 + (-6) = -12).", isRagu: false },
+            { id: 20, text: "15, 5, 15, 0, 0, -20, ...", options: ["-40", "-60", "-80", "-120", "-180"], answer: null, correct: 2, discussion: "Pola loncatan x1, x2, x4... (-20 x 4 = -80).", isRagu: false },
+            { id: 21, text: "2, 5, 10, 25, ..., 300, 600", options: ["100", "120", "150", "30", "60"], answer: null, correct: 4, discussion: "Pola: x2.5, x2, x2.5, x2... (25 x 2.4 = 60).", isRagu: false },
+            { id: 22, text: "10, 10, 3, 9, 1, ..., -4, -28", options: ["-5", "-4", "0", "4", "5"], answer: null, correct: 3, discussion: "Pola: x1, -7, x3, -8, x4. (1 * 4 = 4).", isRagu: false },
+            { id: 23, text: "11, 9, 4, 2, -3, ...", options: ["-4", "-5", "-6", "3", "2"], answer: null, correct: 1, discussion: "Pola: -2, -5, -2, -5... (-3 - 2 = -5).", isRagu: false },
+            { id: 24, text: "4, 1, 2, -3, -6, -13, ...", options: ["-26", "-16", "-10", "26", "16"], answer: null, correct: 0, discussion: "Pola: -3, x2, -5, x2, -7, x2. (-13 x 2 = -26).", isRagu: false },
+            { id: 25, text: "3, 6, 3, 6, 0, 0, ...", options: ["6", "9", "0", "-6", "-9"], answer: null, correct: 4, discussion: "Pola: x2, -3, x2, -6, x2, -9. (0 - 9 = -9).", isRagu: false },
+            { id: 26, text: "10, 20, 5, 20, 0, ..., -25, -200", options: ["-25", "-20", "0", "20", "25"], answer: null, correct: 4, discussion: "Pola loncat-loncat menghasilkan 25.", isRagu: false },
+            { id: 27, text: "2, 8, 5, 20, 18, 72, ...", options: ["17", "19", "73", "71", "70"], answer: null, correct: 3, discussion: "Pola: x4, -3, x4, -2, x4, -1. (72 - 1 = 71).", isRagu: false },
+            { id: 28, text: "1536, -768, ..., 24, ...", options: ["8, -4", "-8, 4", "-8, 2", "12, -6", "-12, 6"], answer: null, correct: 4, discussion: "Pola: /(-2). (24 / -2 = -12, -12 / -2 = 6).", isRagu: false },
+            { id: 29, text: "2, 10, 60, ..., 302400", options: ["420", "360", "480", "520", "600"], answer: null, correct: 0, discussion: "Pola: x5, x6, x7... (60 x 7 = 420).", isRagu: false },
+            { id: 30, text: "4, 8, 16, 32, 64, 128, 256, ..., ...", options: ["312, 624", "412, 824", "512, 1024", "512, 2048", "1024, 2048"], answer: null, correct: 2, discussion: "Pola: x2. (256x2=512, 512x2=1024).", isRagu: false },
+            { id: 31, text: "2, 4, 12, 48, 240, 1440, 10080, ..., ...", options: ["80640, 725760", "70640, 625760", "80640, 625760", "90640, 825760", "80000, 700000"], answer: null, correct: 0, discussion: "Pola: x2, x3, x4, x5, x6, x7, x8, x9.", isRagu: false },
+            { id: 32, text: "144, 288, 72, 144, 36, 72, 18, ..., ...", options: ["24, 6", "30, 8", "36, 9", "40, 10", "18, 4"], answer: null, correct: 2, discussion: "Pola: x2, /4, x2, /4. (18 x 2 = 36, 36 / 4 = 9).", isRagu: false },
+            { id: 33, text: "9, 108, 27, 324, 81, 972, 243, ..., ...", options: ["2916, 729", "2916, 829", "3000, 750", "2816, 700", "2916, 629"], answer: null, correct: 0, discussion: "Pola: x12, /4. (243 x 12 = 2916, 2916 / 4 = 729).", isRagu: false },
+            { id: 34, text: "21, 42, 126, 504, 2520, 15120, 105840, ..., ...", options: ["846720, 7620480", "746720, 6620480", "846720, 6620480", "946720, 8620480", "846720, 7620480"], answer: null, correct: 4, discussion: "Pola: x2, x3, x4, x5, x6, x7, x8, x9.", isRagu: false },
+            { id: 35, text: "4, 8, 8, 16, 16, 32, 32, ..., ...", options: ["48, 48", "64, 64", "64, 128", "128, 128", "64, 32"], answer: null, correct: 1, discussion: "Pola: x2, x1, x2, x1. (32 x 2 = 64, 64 x 1 = 64).", isRagu: false },
+            { id: 36, text: "288, 11, 144, 17, 72, 23, 36, ..., ...", options: ["29, 18", "29, 16", "30, 18", "23, 18", "29, 20"], answer: null, correct: 0, discussion: "Deret 1: /2 (36/2=18). Deret 2: +6 (23+6=29).", isRagu: false },
+            { id: 37, text: "315, 630, 210, 840, 168, 1008, 144, ..., ...", options: ["1152, 128", "1152, 130", "1052, 128", "1252, 140", "1152, 144"], answer: null, correct: 0, discussion: "Pola: x2, /3, x4, /5, x6, /7, x8, /9. (144 x 8 = 1152, 1152 / 9 = 128).", isRagu: false },
+            { id: 38, text: "161280, 161280, 80640, 26880, 6720, 1344, 224, ..., ...", options: ["32, 8", "32, 6", "40, 5", "28, 4", "32, 4"], answer: null, correct: 4, discussion: "Pola: /1, /2, /3, /4, /5, /6, /7, /8. (224/7=32, 32/8=4).", isRagu: false },
+            { id: 39, text: "2, 10, 60, 420, 3360, 30240, 302400, ..., ...", options: ["3326400, 39916800", "3026400, 36916800", "3326400, 36916800", "4326400, 49916800", "3326400, 40000000"], answer: null, correct: 0, discussion: "Pola: x5, x6, x7, x8, x9, x10, x11, x12.", isRagu: false },
+            { id: 40, text: "2401, 343, 1029, 147, 441, 63, 189, ..., ...", options: ["27, 71", "30, 90", "27, 81", "21, 63", "27, 91"], answer: null, correct: 2, discussion: "Pola: /7, x3, /7, x3. (189 / 7 = 27, 27 x 3 = 81).", isRagu: false },
+        ];
+
+        let currentIndex = 0;
+        let timerSeconds = 1800;
+        let timerInterval;
+
+        function mulaiUjian() {
+            const nama = document.getElementById('input-nama').value;
+            const password = document.getElementById('input-password').value;
+            
+            if (!nama) return alert("Silakan masukkan nama Anda!");
+            if (password !== "barisan123") return alert("Password salah! Silakan coba lagi.");
+            
+            document.getElementById('display-nama').innerText = nama;
+            document.getElementById('res-nama').innerText = nama;
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('exam-ui').classList.remove('hidden');
+            renderGrid();
+            loadQuestion();
+            startTimer();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid-nomor');
+            grid.innerHTML = '';
+            questions.forEach((q, index) => {
+                const box = document.createElement('div');
+                box.innerText = index + 1;
+                box.className = `number-box shrink-0 text-center font-bold transition-all duration-200`;
+                
+                if (index === currentIndex) {
+                    box.classList.add('border-emerald-500', 'ring-2', 'ring-emerald-500/20', 'bg-emerald-500/10', 'text-emerald-400');
+                } else if (q.isRagu) {
+                    box.classList.add('bg-amber-400', 'text-amber-950', 'border-amber-400');
+                } else if (q.answer !== null) {
+                    box.classList.add('bg-emerald-500', 'text-black', 'border-emerald-500');
+                } else {
+                    box.classList.add('bg-black/30', 'text-slate-400', 'hover:bg-slate-800');
+                }
+                
+                box.onclick = () => { currentIndex = index; loadQuestion(); };
+                grid.appendChild(box);
+                
+                if(index === currentIndex) box.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            });
+        }
+
+        function loadQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('current-number').innerText = currentIndex + 1;
+            document.getElementById('question-text').innerText = q.text;
+            document.getElementById('ragu-checkbox').checked = q.isRagu;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            
+            q.options.forEach((opt, i) => {
+                const isSelected = q.answer === i;
+                const div = document.createElement('div');
+                div.className = `flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 shadow-sm ${isSelected ? 'border-emerald-500 bg-emerald-500/5 ring-2 ring-emerald-500/10' : 'border-emerald-950/60 bg-black/20 hover:bg-slate-800/40'}`;
+                div.onclick = () => { q.answer = i; loadQuestion(); };
+                div.innerHTML = `
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg border font-bold text-sm transition-colors ${isSelected ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-slate-900 text-slate-400 border-emerald-950'}">${labels[i]}</span> 
+                    <span class="text-sm md:text-base font-semibold text-slate-300 ml-1">${opt}</span>
+                `;
+                container.appendChild(div);
+            });
+
+            const nextBtn = document.getElementById('btn-next');
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerText = 'SELESAI';
+                nextBtn.className = "px-6 py-2.5 bg-emerald-500 text-black rounded-xl font-bold hover:bg-emerald-600 text-xs md:text-sm tracking-wide transition-colors shadow-md";
+                nextBtn.onclick = hitungSkor;
+            } else {
+                nextBtn.innerHTML = 'Lanjut &rarr;';
+                nextBtn.className = "px-6 py-2.5 bg-emerald-500 text-black rounded-xl font-bold hover:bg-emerald-600 text-xs md:text-sm tracking-wide transition-colors shadow-md";
+                nextBtn.onclick = () => changeQuestion(1);
+            }
+            renderGrid();
+        }
+
+        function changeQuestion(step) {
+            let newIndex = currentIndex + step;
+            if (newIndex >= 0 && newIndex < questions.length) {
+                currentIndex = newIndex;
+                loadQuestion();
+            }
+        }
+
+        function toggleRagu() {
+            questions[currentIndex].isRagu = document.getElementById('ragu-checkbox').checked;
+            renderGrid();
+        }
+
+        function hitungSkor() {
+            if (!confirm("Apakah Anda yakin ingin mengakhiri ujian?")) return;
+            clearInterval(timerInterval);
+            let benar = 0;
+            const review = document.getElementById('review-container');
+            review.innerHTML = '<h3 class="text-base font-bold text-slate-400 uppercase tracking-wider mb-4">Pembahasan Soal</h3>';
+
+            questions.forEach((q, i) => {
+                const isCorrect = q.answer === q.correct;
+                if (isCorrect) benar++;
+
+                const item = document.createElement('div');
+                item.className = `p-5 rounded-2xl border ${isCorrect ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-red-500/20 bg-red-500/5'}`;
+                item.innerHTML = `
+                    <p class="font-bold text-sm md:text-base text-slate-200">Soal ${i+1}: <span class="tracking-wide">${q.text}</span></p>
+                    <p class="text-xs md:text-sm mt-2 text-slate-400">Jawaban Anda: <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-red-400'}">${q.answer !== null ? q.options[q.answer] : 'Tidak dijawab'}</span> | 
+                    Benar: <span class="text-emerald-400 font-bold">${q.options[q.correct]}</span></p>
+                    <div class="mt-3 text-xs text-slate-400 bg-black/40 p-3.5 rounded-xl border border-emerald-950/60 leading-relaxed shadow-sm"><span class="font-bold text-emerald-400 block mb-0.5">Pembahasan:</span> ${q.discussion}</div>
+                `;
+                review.appendChild(item);
+            });
+
+            const score = Math.round((benar / questions.length) * 100);
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('exam-ui').classList.add('hidden');
+            document.getElementById('result-page').classList.remove('hidden');
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu Habis!");
+                    hitungSkor();
+                }
+                const m = Math.floor(timerSeconds / 60);
+                const s = timerSeconds % 60;
+                document.getElementById('timer').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
