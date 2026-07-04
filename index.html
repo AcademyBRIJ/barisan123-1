@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT D'BRIJ Academy - Ujian Deret Angka</title>
+    <title>CBT Bright Academy - Ujian Deret Angka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0b0f17; }
-        .number-box { @apply w-10 h-10 flex items-center justify-center border border-emerald-950 cursor-pointer rounded-lg text-xs font-semibold transition-all shadow-sm; }
+        /* Peningkatan style nomor soal agar sangat kontras dan jelas terbaca */
+        .number-box { 
+            @apply w-11 h-11 flex items-center justify-center border-2 border-emerald-950/80 cursor-pointer rounded-xl text-sm font-extrabold transition-all shadow-md tracking-wider;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-200">
@@ -41,7 +44,7 @@
     <div id="exam-ui" class="hidden flex flex-col h-screen">
         <header class="bg-black text-white px-4 md:px-6 py-3.5 flex justify-between items-center shadow-md shrink-0 border-b border-emerald-950">
             <div class="flex items-center gap-3">
-                <span class="text-base md:text-lg font-bold tracking-tight text-emerald-400">D'BRIJ ACADEMY </span>
+                <span class="text-base md:text-lg font-bold tracking-tight text-emerald-400">Bright Academy</span>
                 <div class="h-5 w-px bg-emerald-950 hidden md:block"></div>
                 <span id="display-nama" class="font-medium uppercase text-xs md:text-sm bg-slate-900 px-2.5 py-1 rounded text-slate-300 truncate max-w-[100px] md:max-w-none border border-emerald-950">PESERTA</span>
             </div>
@@ -56,22 +59,23 @@
             <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-900 order-1 md:order-1 flex items-center">
                 <div class="max-w-3xl mx-auto w-full text-left">
                     <h2 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">
-                        SOAL NO: <span id="current-number" class="bg-emerald-500 text-black px-2.5 py-1 rounded-md ml-1 font-mono text-xs md:text-sm font-bold">1</span>
+                        SOAL NO: <span id="current-number" class="bg-emerald-500 text-black px-2.5 py-1 rounded-md ml-1 font-mono text-xs md:text-sm font-extrabold">1</span>
                     </h2>
                     <div id="question-text" class="text-xl md:text-3xl font-bold text-slate-100 mb-6 p-6 bg-black/40 rounded-2xl border border-emerald-950/60 leading-relaxed tracking-wide shadow-sm text-left"></div>
                     <div id="options-container" class="space-y-3"></div>
                 </div>
             </main>
 
-            <aside class="w-full md:w-80 bg-slate-950 p-4 border-t md:border-t-0 md:border-l border-emerald-950/40 flex flex-col order-2 md:order-2 max-h-[220px] md:max-h-none shrink-0 md:shrink overflow-y-auto">
+            <aside class="w-full md:w-80 bg-slate-950 p-4 border-t md:border-t-0 md:border-l border-emerald-950/40 flex flex-col order-2 md:order-2 max-h-[260px] md:max-h-none shrink-0 md:shrink overflow-y-auto">
                 <h3 class="text-[11px] font-bold text-slate-400 mb-3 uppercase tracking-wider text-center md:text-left">Navigasi Soal</h3>
                 
                 <div id="grid-nomor" class="grid grid-cols-5 gap-2 pb-2 md:pb-0">
                     </div>
                 
                 <div class="hidden md:block mt-auto p-4 space-y-2.5 text-xs border-t border-emerald-950 pt-4 text-slate-400">
-                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-emerald-500 rounded-md"></div> Sudah Terjawab</div>
-                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-amber-400 rounded-md"></div> Ragu-ragu</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-emerald-500 rounded-md"></div> Sudah Terjawab (Hijau Cerah)</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-amber-400 rounded-md"></div> Ragu-ragu (Kuning)</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-slate-800 border border-emerald-500 rounded-md"></div> Sedang Dipilih (Bingkai Hijau)</div>
                 </div>
             </aside>
 
@@ -103,7 +107,6 @@
     </div>
 
     <script>
-        // Logika array data dipertahankan sesuai aslinya
         const questions = [
             { id: 1, text: "42, 7, 28, 4, 16, ..., 8", options: ["2", "3", "4", "5", "6"], answer: null, correct: 0, discussion: "Pola: 42/6=7, 28/7=4, 16/8=2.", isRagu: false },
             { id: 2, text: "3, 6, 1, 2, -4, ..., -15", options: ["-10", "-8", "-6", "4", "2"], answer: null, correct: 1, discussion: "Pola: x2, -5, x2, -6, x2, -7. (-4 x 2 = -8).", isRagu: false },
@@ -173,16 +176,17 @@
             questions.forEach((q, index) => {
                 const box = document.createElement('div');
                 box.innerText = index + 1;
-                box.className = `number-box shrink-0 text-center font-bold transition-all duration-200`;
+                box.className = `number-box shrink-0 text-center transition-all duration-200`;
                 
+                // Logika pewarnaan nomor yang jauh lebih tegas kontrasnya
                 if (index === currentIndex) {
-                    box.classList.add('border-emerald-500', 'ring-2', 'ring-emerald-500/20', 'bg-emerald-500/10', 'text-emerald-400');
+                    box.className += ' border-emerald-400 bg-slate-800 text-emerald-400 ring-2 ring-emerald-400/40 scale-105 z-10';
                 } else if (q.isRagu) {
-                    box.classList.add('bg-amber-400', 'text-amber-950', 'border-amber-400');
+                    box.className += ' bg-amber-400 text-amber-950 border-amber-500 shadow-amber-400/20';
                 } else if (q.answer !== null) {
-                    box.classList.add('bg-emerald-500', 'text-black', 'border-emerald-500');
+                    box.className += ' bg-emerald-500 text-black border-emerald-600 shadow-emerald-500/20';
                 } else {
-                    box.classList.add('bg-black/30', 'text-slate-400', 'hover:bg-slate-800');
+                    box.className += ' bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white';
                 }
                 
                 box.onclick = () => { currentIndex = index; loadQuestion(); };
@@ -208,8 +212,8 @@
                 div.className = `flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 shadow-sm ${isSelected ? 'border-emerald-500 bg-emerald-500/5 ring-2 ring-emerald-500/10' : 'border-emerald-950/60 bg-black/20 hover:bg-slate-800/40'}`;
                 div.onclick = () => { q.answer = i; loadQuestion(); };
                 div.innerHTML = `
-                    <span class="w-8 h-8 flex items-center justify-center rounded-lg border font-bold text-sm transition-colors ${isSelected ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-slate-900 text-slate-400 border-emerald-950'}">${labels[i]}</span> 
-                    <span class="text-sm md:text-base font-semibold text-slate-300 ml-1">${opt}</span>
+                    <span class="w-8 h-8 flex items-center justify-center rounded-lg border font-extrabold text-sm transition-colors ${isSelected ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-slate-900 text-slate-400 border-emerald-950'}">${labels[i]}</span> 
+                    <span class="text-sm md:text-base font-semibold text-slate-300 ml-2">${opt}</span>
                 `;
                 container.appendChild(div);
             });
